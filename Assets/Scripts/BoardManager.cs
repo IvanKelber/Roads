@@ -24,6 +24,9 @@ public class BoardManager : MonoBehaviour
     [SerializeField, Range(.01f,1)]
     private float cellRotationDuration = .1f;
 
+    [SerializeField, Range(0, 50)]
+    private int popMagnitude = 1;
+
     public Camera cam;
 
     public Tile[,] grid;
@@ -83,10 +86,10 @@ public class BoardManager : MonoBehaviour
 
         float boardHeight = frustumHeight - marginY;
         float boardWidth = frustumWidth - marginX;
-        cellWidth = boardWidth/numberOfColumns - cellPadding;
+        cellWidth = boardWidth/numberOfColumns;
         cellHeight = cellWidth;
         outerBoardBounds = new Bounds(cam.transform.position + Vector3.forward * cam.farClipPlane/2, new Vector3(boardWidth, boardHeight, 0));
-        innerBoardBounds = new Bounds(outerBoardBounds.center, new Vector3((cellWidth + cellPadding) * numberOfColumns, cellHeight * numberOfRows, 0));
+        innerBoardBounds = new Bounds(outerBoardBounds.center, new Vector3((cellWidth + cellPadding) * numberOfColumns, (cellHeight + cellPadding) * numberOfRows, 0));
         transform.position = outerBoardBounds.center;
         grid = InitializeGrid();
         // RandomizeBoard();
@@ -135,7 +138,7 @@ public class BoardManager : MonoBehaviour
         float endMoving = startMoving + .15f;
         while(Time.time < endMoving) {
             foreach(Tile tile in tiles) {
-                tile.transform.Translate(Vector3.forward * Time.deltaTime * -1/duration);
+                tile.transform.Translate(Vector3.forward * Time.deltaTime * -popMagnitude/duration);
             }
             yield return null;
         }
