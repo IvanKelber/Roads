@@ -43,6 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cedaa4f8fe5bc4a62bbc494cc64b8839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textures:
+  - {fileID: 2800000, guid: 075f1b0c414484185b999ea8b06ab2f0, type: 3}
+  - {fileID: 2800000, guid: b5e7ffe419fc2434984fa4952770fec8, type: 3}
   onTapped: {fileID: 11400000, guid: 63e9d85995599490cadaf65069a5cc1c, type: 2}
   material: {fileID: 2100000, guid: cb6dfc73631254086a507124fab7921f, type: 2}
   audioSource: {fileID: 0}

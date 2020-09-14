@@ -3,12 +3,17 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _OutlineTex ("Texture", 2D) = "white" {}
         _MainColor ("Color", Color) = (0,0,0,0)
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType" = "Opaque" 
+               "Queue" = "Transparent" 
+             }
         LOD 100
+
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -34,6 +39,7 @@
             };
 
             sampler2D _MainTex;
+            sampler2D _OutlineTex;
             float4 _MainColor;
             float4 _MainTex_ST;
 
@@ -48,8 +54,9 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
-                return _MainColor * col;
+                fixed4 main = tex2D(_MainTex, i.uv);
+                fixed4 outline = tex2D(_OutlineTex, i.uv);
+                return main;
             }
             ENDCG
         }

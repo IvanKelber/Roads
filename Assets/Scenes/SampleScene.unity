@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2a417ce9a0f24125b6371fa95070c2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectBeforeRelase: 1
+  detectBeforeRelase: 0
   tapThreshold: 10
   camera: {fileID: 519420031}
 --- !u!82 &92320533
@@ -265,19 +265,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1469580e654a489adda99316413fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorsManifest:
-  - {r: 0.41218156, g: 0.0768957, b: 0.6037736, a: 1}
-  - {r: 0.5567817, g: 0.40850836, b: 0.6415094, a: 1}
-  - {r: 0.16699567, g: 0.06301175, b: 0.2264151, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
-  numberOfColors: 1
-  numberOfColumns: 3
-  numberOfRows: 3
+  numberOfColumns: 6
+  numberOfRows: 6
   marginX: 100
   marginY: 0
-  cellPadding: 15
+  cellPadding: 0
   cellRotationDuration: 0.3
-  popMagnitude: 1
+  popMagnitude: 50
   cam: {fileID: 519420031}
   tilePrefab: {fileID: 4264874068421155, guid: f2623afedb24647f49e9fdcd4ef1fa98, type: 3}
   SFXManager: {fileID: 11400000, guid: 533bb5265d63d4055a00df365c35d568, type: 2}
@@ -331,7 +325,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.8626816, g: 0.75444996, b: 0.9245283, a: 1}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

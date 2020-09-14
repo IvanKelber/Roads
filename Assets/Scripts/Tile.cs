@@ -6,7 +6,10 @@ using ScriptableObjectArchitecture;
 public class Tile : MonoBehaviour
 {
 
-    private Color color = Color.white;
+    [SerializeField]
+    private Texture2D[] textures;
+
+    private bool isStraight = true;
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;    
     private float cellWidth = 1;
@@ -42,6 +45,8 @@ public class Tile : MonoBehaviour
     [HideInInspector]
     public AudioSource audioSource;
 
+    private Quaternion startingOrientation;
+
     private void Awake()
     {
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
@@ -53,11 +58,12 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void Initialize(float cellWidth, float cellHeight, Color color, Vector2Int index, float z) {
+    public void Initialize(float cellWidth, float cellHeight, bool isStraight, Vector2Int index, float z, Quaternion startingOrientation) {
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
-        this.color = color;
+        this.isStraight = isStraight;
         this.z = z;
+        this.startingOrientation = startingOrientation;
         Index = index;
     }
 
@@ -69,20 +75,11 @@ public class Tile : MonoBehaviour
     public void Destroy() {
         Destroy(this.gameObject);
     }
- 
-    public void SetColor(Color color) {
-        this.color = color;
-        meshRenderer.material.SetColor("_MainColor", color);
-    }
-    
-    public Color GetColor() {
-        return this.color;
-    }
 
     public void Render(Vector3 position)
     {
         meshRenderer.sharedMaterial = material;
-        meshRenderer.material.SetColor("_MainColor", color);
+        meshRenderer.material.SetTexture("_MainTex", isStraight ? textures[1] : textures[0]);
         meshFilter.mesh = new Mesh();
 
         Mesh mesh = GetComponent<MeshFilter>().mesh;
@@ -107,6 +104,7 @@ public class Tile : MonoBehaviour
                 new Vector2(1, 1)
         };
         mesh.uv = uv;
+        this.transform.rotation = startingOrientation;
     }
     private Vector3[] GetVertices(Vector3 position)
     {
@@ -134,9 +132,5 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown() {
         onTapped.Raise(new Vector2(Index.x, Index.y));
-    }
-
-    public override string ToString() {
-        return "Tile: " + Index + ", " + color;
     }
 }
