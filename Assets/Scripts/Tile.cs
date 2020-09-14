@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ScriptableObjectArchitecture;
+using TileRotation;
 
 public class Tile : MonoBehaviour
 {
@@ -20,6 +21,24 @@ public class Tile : MonoBehaviour
 
     [SerializeField]
     private Vector2GameEvent onTapped;
+
+    private Orientation currentOrienation;
+    public Orientation Orientation {
+        get {
+            return currentOrienation;
+        }
+        set {
+            currentOrienation = value;
+            ReOrient();
+        }
+    }
+
+    private bool isLocked = false;
+    public bool IsLocked {
+        get {
+            return isLocked;
+        }
+    }
 
     public Vector3 Position {
         get {
@@ -45,8 +64,6 @@ public class Tile : MonoBehaviour
     [HideInInspector]
     public AudioSource audioSource;
 
-    private Quaternion startingOrientation;
-
     private void Awake()
     {
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
@@ -58,12 +75,12 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void Initialize(float cellWidth, float cellHeight, bool isStraight, Vector2Int index, float z, Quaternion startingOrientation) {
-        this.cellWidth = cellWidth;
-        this.cellHeight = cellHeight;
+    public void Initialize(float cellSize, bool isStraight, Vector2Int index, float z, Orientation startingOrientation) {
+        this.cellWidth = cellSize;
+        this.cellHeight = cellSize;
         this.isStraight = isStraight;
         this.z = z;
-        this.startingOrientation = startingOrientation;
+        this.currentOrienation = startingOrientation;
         Index = index;
     }
 
@@ -104,8 +121,13 @@ public class Tile : MonoBehaviour
                 new Vector2(1, 1)
         };
         mesh.uv = uv;
-        this.transform.rotation = startingOrientation;
+        ReOrient();
     }
+
+    private void ReOrient() {
+        this.transform.rotation = RotationHelper.GetRotation(currentOrienation);
+    }
+
     private Vector3[] GetVertices(Vector3 position)
     {
         Vector3[] vertices = new Vector3[4]
@@ -131,6 +153,12 @@ public class Tile : MonoBehaviour
     }
 
     private void OnMouseDown() {
-        onTapped.Raise(new Vector2(Index.x, Index.y));
+        // onTapped.Raise(new Vector2(Index.x, Index.y));
+        Lock();
+    }
+
+    private void Lock() {
+        isLocked = true;
+        meshRenderer.material.SetColor("_MainColor", new Color(1,1,1,.5f));
     }
 }

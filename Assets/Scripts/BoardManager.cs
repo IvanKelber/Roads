@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TileRotation;
 
 public class BoardManager : MonoBehaviour
 {
@@ -94,7 +95,7 @@ public class BoardManager : MonoBehaviour
         Tile[,] grid = new Tile[numberOfColumns,numberOfRows];
         for(int col = 0; col < numberOfColumns; col++) {
             for(int row = 0; row < numberOfRows; row++) {
-                grid[col,row] = RenderTile(col, row, cellWidth, cellHeight, col * row % 2 == 0);
+                grid[col,row] = RenderTile(col, row, cellWidth, Random.value > .5f, RotationHelper.RandomOrientation());
             }
         }
         return grid;
@@ -116,7 +117,9 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator RotateTile(Tile tile, float degrees, float duration) {
 
-        Quaternion endRotation = tile.transform.rotation * Quaternion.Euler(0,0,degrees);
+        Orientation endOrientation = tile.Orientation.GetNextOrientation(degrees);
+        Debug.Log("InitialRotation of Tile " + tile.Index + " is: " + tile.Orientation);
+        Debug.Log("\tEndRotation should be " + endOrientation);
         Vector3 center = tile.Position;
         float startMoving = Time.time;
         float endMoving = startMoving + .15f;
@@ -132,31 +135,33 @@ public class BoardManager : MonoBehaviour
         while(Time.time < endTime || totalDegrees < degrees) {
             float rotationThisFrame = Time.deltaTime * degrees / duration;
             totalDegrees += Mathf.Abs(rotationThisFrame);
-            tile.transform.RotateAround(center, Vector3.forward, rotationThisFrame);
+            tile.transform.Rotate(Vector3.forward, rotationThisFrame);
             yield return null;
         }
         SFXManager.Play("Rotate", audioSource);
 
         yield return new WaitForSeconds(.1f);
     
-        tile.transform.rotation = endRotation;
         tile.Position = CalculateGamePosition(tile.Index.x, tile.Index.y, innerBoardBounds);
+        tile.Orientation = endOrientation;
         
         yield return null;
     }
 
     private IEnumerator RotateTiles(SwipeInfo.SwipeDirection direction) {
+        rotatingTiles = true;
         for(int i = 0; i < numberOfColumns; i++) {
             for(int j = 0; j < numberOfRows; j++) {
-                StartCoroutine(RotateTile(grid[i,j], direction == SwipeInfo.SwipeDirection.LEFT ? -90 : 90, cellRotationDuration));
+                if(!grid[i,j].IsLocked) {
+                    StartCoroutine(RotateTile(grid[i,j], direction == SwipeInfo.SwipeDirection.LEFT ? -90 : 90, cellRotationDuration));
+                }
             }
         }
-        yield return new WaitForSeconds(cellRotationDuration);
+        yield return new WaitForSeconds(cellRotationDuration * 2);
         rotatingTiles = false;
     }
 
     private void Update() {
-        // RenderBoard();
         if(Input.GetKeyDown(KeyCode.Space)) {
             RenderBoard();
         }
@@ -170,17 +175,12 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private Tile RenderTile(int col, int row, float cellWidth, float cellHeight, bool straight) {
+    private Tile RenderTile(int col, int row, float cellSize, bool isStraight, Orientation startingOrientation) {
         Vector3 center = CalculateGamePosition(col, row, innerBoardBounds);
         Tile tile = (Instantiate(tilePrefab, center, Quaternion.identity) as Tile);
-        tile.Initialize(cellWidth, cellHeight, straight, new Vector2Int(col, row), outerBoardBounds.center.z, RandomOrientation());
+        tile.Initialize(cellSize, isStraight, new Vector2Int(col, row), outerBoardBounds.center.z, startingOrientation);
         tile.transform.parent = transform;
         return tile;
-    }
-
-    private Quaternion RandomOrientation() {
-        int[] orientations = new int[] {0,90,180,270};
-        return Quaternion.identity * Quaternion.Euler(0,0, orientations[Random.Range(0,orientations.Length)]);
     }
 
     public void HandleSwipe(SwipeInfo swipe)
@@ -192,12 +192,12 @@ public class BoardManager : MonoBehaviour
         if(swipe.Direction == SwipeInfo.SwipeDirection.UP) {
             numberOfColumns++;
             numberOfRows++;
-            InitializeGrid();
+            RenderBoard();
             return;
         } else if (swipe.Direction == SwipeInfo.SwipeDirection.DOWN) {
             numberOfColumns--;
             numberOfRows--;
-            InitializeGrid();
+            RenderBoard();
             return;
         }
 
@@ -206,6 +206,10 @@ public class BoardManager : MonoBehaviour
             StartCoroutine(RotateTiles(swipe.Direction));
         }
     }
+
+    // public void LockTile(Vector2 index) {
+    //     grid[(int)index.x, (int)index.y].Lock();
+    // }
 
     public Vector3 GetPosition(int column, int row) {
         return grid[column,row].Position;
