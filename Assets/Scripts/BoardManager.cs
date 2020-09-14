@@ -118,8 +118,7 @@ public class BoardManager : MonoBehaviour
     private IEnumerator RotateTile(Tile tile, float degrees, float duration) {
 
         Orientation endOrientation = tile.Orientation.GetNextOrientation(degrees);
-        Debug.Log("InitialRotation of Tile " + tile.Index + " is: " + tile.Orientation);
-        Debug.Log("\tEndRotation should be " + endOrientation);
+
         Vector3 center = tile.Position;
         float startMoving = Time.time;
         float endMoving = startMoving + .15f;
@@ -183,6 +182,42 @@ public class BoardManager : MonoBehaviour
         return tile;
     }
 
+    private HashSet<Tile> GetConnectedNeighbors(Tile tile) {
+        int column = tile.Index.x;
+        int row = tile.Index.y;
+        HashSet<Tile> neighbors = new HashSet<Tile>();
+
+        if(column - 1 >= 0) {
+            //Check neighbor to the left
+            Tile leftNeighbor = grid[column - 1, row];
+            if(tile.GetEntries().Contains(Tile.TileEntry.Left) && leftNeighbor.GetEntries().Contains(Tile.TileEntry.Right)) {
+                neighbors.Add(leftNeighbor);
+            }
+        }
+        if(column + 1 < numberOfColumns) {
+            //Check neighbor to the right
+            Tile rightNeighbor = grid[column + 1, row];
+            if(tile.GetEntries().Contains(Tile.TileEntry.Right) && rightNeighbor.GetEntries().Contains(Tile.TileEntry.Left)) {
+                neighbors.Add(rightNeighbor);
+            }
+        }
+        if(row - 1 >= 0) {
+            //Check neighbor to the bottom
+            Tile bottomNeighbor = grid[column, row - 1];
+            if(tile.GetEntries().Contains(Tile.TileEntry.Bottom) && bottomNeighbor.GetEntries().Contains(Tile.TileEntry.Top)) {
+                neighbors.Add(bottomNeighbor);
+            }
+        }            
+        if(row + 1 < numberOfRows) {
+            //Check neighbor to the top
+            Tile topNeighbor = grid[column, row + 1];
+            if(tile.GetEntries().Contains(Tile.TileEntry.Top) && topNeighbor.GetEntries().Contains(Tile.TileEntry.Bottom)) {
+                neighbors.Add(topNeighbor);
+            }
+        }
+        return neighbors;
+    }
+
     public void HandleSwipe(SwipeInfo swipe)
     {
         if (Busy)
@@ -241,24 +276,38 @@ public class BoardManager : MonoBehaviour
     }
     
     private void OnDrawGizmos() {
-        if(grid != null) {
-            Gizmos.color = new Color(.8f, 0, 0, .5f);
-            for(int col = 0; col < numberOfColumns; col++) {
-                for(int row = 0; row < numberOfRows; row++) {
-                    if(grid[col,row] == null) {
-                        Gizmos.DrawCube(CalculateGamePosition(col, row, innerBoardBounds), new Vector3(cellWidth, cellHeight, 1));
-                    }
+        // if(grid != null) {
+        //     Gizmos.color = new Color(.8f, 0, 0, .5f);
+        //     for(int col = 0; col < numberOfColumns; col++) {
+        //         for(int row = 0; row < numberOfRows; row++) {
+        //             if(grid[col,row] == null) {
+        //                 Gizmos.DrawCube(CalculateGamePosition(col, row, innerBoardBounds), new Vector3(cellWidth, cellHeight, 1));
+        //             }
+        //         }
+        //     }
+        // }
+        // if(outerBoardBounds != null) {
+        //     Gizmos.color = new Color(.7f, 0f, .7f, .3f);
+
+        //     Gizmos.DrawCube(outerBoardBounds.center, new Vector3(outerBoardBounds.max.x - outerBoardBounds.min.x, outerBoardBounds.max.y - outerBoardBounds.min.y, 1));
+
+        //     Gizmos.color = new Color(0f, .7f, .7f, .3f);
+
+        //     Gizmos.DrawCube(innerBoardBounds.center, new Vector3(innerBoardBounds.max.x - innerBoardBounds.min.x, innerBoardBounds.max.y - innerBoardBounds.min.y, 1));
+        // }
+
+        if(grid == null) {
+            return;
+        }
+
+        for(int i = 0; i < numberOfColumns; i++) {
+            for(int j = 0; j < numberOfRows; j++) {
+                Tile tile = grid[i,j];
+                foreach(Tile neighbor in GetConnectedNeighbors(tile)) {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawCube(tile.Position + (neighbor.Position - tile.Position)/2, new Vector3(cellWidth/2,cellHeight/2,1));
                 }
             }
-        }
-        if(outerBoardBounds != null) {
-            Gizmos.color = new Color(.7f, 0f, .7f, .3f);
-
-            Gizmos.DrawCube(outerBoardBounds.center, new Vector3(outerBoardBounds.max.x - outerBoardBounds.min.x, outerBoardBounds.max.y - outerBoardBounds.min.y, 1));
-
-            Gizmos.color = new Color(0f, .7f, .7f, .3f);
-
-            Gizmos.DrawCube(innerBoardBounds.center, new Vector3(innerBoardBounds.max.x - innerBoardBounds.min.x, innerBoardBounds.max.y - innerBoardBounds.min.y, 1));
         }
     }
 

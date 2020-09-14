@@ -161,4 +161,44 @@ public class Tile : MonoBehaviour
         isLocked = true;
         meshRenderer.material.SetColor("_MainColor", new Color(1,1,1,.5f));
     }
+
+    public HashSet<TileEntry> GetEntries() {
+        HashSet<TileEntry> entries = new HashSet<TileEntry>();
+        if(isStraight) {
+            if(currentOrienation == Orientation.Turn0 || currentOrienation == Orientation.Turn180) {
+                entries.Add(TileEntry.Top);
+                entries.Add(TileEntry.Bottom);
+            } else {
+                entries.Add(TileEntry.Left);
+                entries.Add(TileEntry.Right);    
+            }
+        } else {
+            switch(currentOrienation) {
+                case Orientation.Turn0:
+                    entries.Add(TileEntry.Top);
+                    entries.Add(TileEntry.Left);
+                    break;
+                case Orientation.Turn90:
+                    entries.Add(TileEntry.Left);
+                    entries.Add(TileEntry.Bottom);
+                    break;
+                case Orientation.Turn180:
+                    entries.Add(TileEntry.Bottom);
+                    entries.Add(TileEntry.Right);
+                    break;
+                case Orientation.Turn270:
+                    entries.Add(TileEntry.Right);
+                    entries.Add(TileEntry.Top);
+                    break;
+            }
+        }
+        return entries;
+    }
+
+    public enum TileEntry {
+        Left,
+        Right,
+        Top,
+        Bottom
+    }
 }
