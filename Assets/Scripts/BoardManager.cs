@@ -29,7 +29,7 @@ public class BoardManager : MonoBehaviour
 
     public Tile[,] grid;
 
-    private float cellWidth;
+    public float cellWidth;
     private float cellHeight;
 
     [SerializeField]
@@ -51,6 +51,8 @@ public class BoardManager : MonoBehaviour
             return rotatingTiles;
         }
     }
+
+    public Car car;
 
     private void Awake()
     {
@@ -172,6 +174,22 @@ public class BoardManager : MonoBehaviour
             rotatingTiles = true;
             StartCoroutine(RotateTiles(SwipeInfo.SwipeDirection.RIGHT));
         }
+        if(Input.GetKeyDown(KeyCode.S)) {
+            TryStep();
+        }
+    }
+
+    private void TryStep() {
+        Tile carCurrentTile = grid[car.Index.x, car.Index.y];
+
+        foreach(Tile neighbor in GetConnectedNeighbors(carCurrentTile)) {
+            if(!neighbor.IsLocked) {
+                car.Step(neighbor.Index);
+                neighbor.Lock();
+                return;
+            }
+        }
+        // handle invalid movement here.
     }
 
     private Tile RenderTile(int col, int row, float cellSize, bool isStraight, Orientation startingOrientation) {

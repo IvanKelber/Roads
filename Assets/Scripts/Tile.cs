@@ -157,9 +157,8 @@ public class Tile : MonoBehaviour
         Lock();
     }
 
-    private void Lock() {
+    public void Lock() {
         isLocked = true;
-        meshRenderer.material.SetColor("_MainColor", new Color(1,1,1,.5f));
     }
 
     public HashSet<TileEntry> GetEntries() {
