@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 
 namespace TileRotation {
+
+[Serializable]
 public enum Orientation {
     Turn0,
     Turn90,

@@ -57,6 +57,7 @@ public class BoardManager : MonoBehaviour
     private void Awake()
     {
         Gestures.OnSwipe += HandleSwipe;
+        Gestures.OnTap += TryStep;
         audioSource = GetComponent<AudioSource>();
         RenderBoard();
     }
@@ -177,6 +178,11 @@ public class BoardManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.S)) {
             TryStep();
         }
+    }
+
+    private void TryStep(Vector3 tapPosition) {
+        // tap position doesn't matter atm
+        TryStep();
     }
 
     private void TryStep() {
