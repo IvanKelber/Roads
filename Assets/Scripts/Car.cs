@@ -7,10 +7,14 @@ public class Car : MonoBehaviour
     public Vector2Int Index;
     public BoardManager board;
     private void Start() {
-        Index = new Vector2Int(0,0);
-        board.grid[0,0].Lock();
-        SetPosition();
         SetScale();
+    }
+
+    public void Initialize(Vector2Int startingIndex) {
+        Debug.Log("initializing car at " + startingIndex);
+        Index = startingIndex;
+        board.grid[startingIndex.x, startingIndex.y].Lock();
+        SetPosition();
     }
 
     private void SetPosition() {

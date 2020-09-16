@@ -25,6 +25,13 @@ public class Level : ScriptableObject
 
         public TileRow[] rows;
 
+        // Define the indexer to allow client code to use [] notation.
+        public TileRow this[int i]
+        {
+            get { return rows[i]; }
+            set { rows[i] = value; }
+        }
+
         public TileMatrix(int numberOfColumns, int numberOfRows) {
             this.numberOfColumns = numberOfColumns;
             this.numberOfRows = numberOfRows;
@@ -38,6 +45,13 @@ public class Level : ScriptableObject
     [Serializable]
     public class TileRow {
         public TileInfo[] row;
+
+                // Define the indexer to allow client code to use [] notation.
+        public TileInfo this[int i]
+        {
+            get { return row[i]; }
+            set { row[i] = value; }
+        }
 
         public TileRow(int numberOfColumns) {
             row = new TileInfo[numberOfColumns];

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86feb33b66eb24101aa5e5d077b48444, type: 3}
   m_Name: TileClackAudio
   m_EditorClassIdentifier: 
-  Name: Clack
+  Name: InvalidStep
   clip: {fileID: 8300000, guid: affc63d004d6c4957bdeecd0013d049b, type: 3}
   volume: 1

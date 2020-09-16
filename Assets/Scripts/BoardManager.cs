@@ -35,10 +35,14 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     private Tile tilePrefab;
 
+    [SerializeField]
+    private Level firstLevel;
+
     private Bounds outerBoardBounds;
     private Bounds innerBoardBounds;
 
     private bool rotatingTiles = false;
+    private bool invalidStep = false;
 
 
     [SerializeField]
@@ -48,21 +52,23 @@ public class BoardManager : MonoBehaviour
 
     private bool Busy {
         get {
-            return rotatingTiles;
+            return rotatingTiles || invalidStep;
         }
     }
 
     public Car car;
+
+    private Stack<PlayerAction> playerActions = new Stack<PlayerAction>();
 
     private void Awake()
     {
         Gestures.OnSwipe += HandleSwipe;
         Gestures.OnTap += TryStep;
         audioSource = GetComponent<AudioSource>();
-        RenderBoard();
+        LoadLevel(firstLevel);
     }
 
-    private void RenderBoard() {
+    private void RenderBoard(Level level) {
 
         if(grid != null) {
             for(int i = 0; i < grid.GetLength(0); i++) {
@@ -77,8 +83,12 @@ public class BoardManager : MonoBehaviour
             Debug.LogError("Cannot calculate grid bounds because camera is missing.");
             return;
         }
-        // The height of the frustum at a given distance (both in world units) can be obtained with the following formula:
+        if(level != null) {
+            numberOfColumns = level.numberOfColumns;
+            numberOfRows = level.numberOfRows;
+        }
 
+        // The height of the frustum at a given distance (both in world units) can be obtained with the following formula:
         float frustumHeight = 2.0f * cam.farClipPlane/2 * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
 
     
@@ -91,14 +101,27 @@ public class BoardManager : MonoBehaviour
         outerBoardBounds = new Bounds(cam.transform.position + Vector3.forward * cam.farClipPlane/2, new Vector3(boardWidth, boardHeight, 0));
         innerBoardBounds = new Bounds(outerBoardBounds.center, new Vector3((cellWidth + cellPadding) * numberOfColumns, (cellHeight + cellPadding) * numberOfRows, 0));
         transform.position = outerBoardBounds.center;
-        grid = InitializeGrid();
+        grid = InitializeGrid(level);
     }
 
-    private Tile[,] InitializeGrid() {
+    private void RenderBoard() {
+        RenderBoard(null);
+    }
+
+    private void LoadLevel(Level level) {
+        RenderBoard(level);
+        car.Initialize(level.startingIndex);
+    }
+
+    private Tile[,] InitializeGrid(Level level) {
         Tile[,] grid = new Tile[numberOfColumns,numberOfRows];
         for(int col = 0; col < numberOfColumns; col++) {
-            for(int row = 0; row < numberOfRows; row++) {
-                grid[col,row] = RenderTile(col, row, cellWidth, Random.value > .5f, RotationHelper.RandomOrientation());
+            for(int row = 0; row < numberOfRows; row++) { 
+                if(level != null) { 
+                    grid[col,row] = RenderTile(col, row, cellWidth, level.levelMatrix[row][col].isStraight, level.levelMatrix[row][col].startingOrientation);
+                } else {
+                    grid[col,row] = RenderTile(col, row, cellWidth, Random.value > .5f, RotationHelper.RandomOrientation());
+                }
             }
         }
         return grid;
@@ -150,39 +173,66 @@ public class BoardManager : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator RotateTiles(SwipeInfo.SwipeDirection direction) {
+    private IEnumerator RotateTiles(float degrees, bool undo) {
         rotatingTiles = true;
         for(int i = 0; i < numberOfColumns; i++) {
             for(int j = 0; j < numberOfRows; j++) {
                 if(!grid[i,j].IsLocked) {
-                    StartCoroutine(RotateTile(grid[i,j], direction == SwipeInfo.SwipeDirection.LEFT ? -90 : 90, cellRotationDuration));
+                    Coroutine rotation = StartCoroutine(RotateTile(grid[i,j], degrees, cellRotationDuration));
+                    if(i == numberOfColumns - 1 && j == numberOfRows -1) {
+                        yield return rotation;
+                    }
                 }
             }
         }
-        yield return new WaitForSeconds(cellRotationDuration * 2);
+        if(!undo) {
+            TryStep();
+        }
         rotatingTiles = false;
+
     }
 
+    private void Rotate(SwipeInfo.SwipeDirection direction) {
+        float degrees = direction == SwipeInfo.SwipeDirection.LEFT ? -90 : 90;
+        StartCoroutine(RotateTiles(degrees, false));
+        playerActions.Push(new RotateAction(this, degrees));
+    }
+
+    public void Rotate(float degrees) {
+        StartCoroutine(RotateTiles(degrees, true));
+    }
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Space)) {
             RenderBoard();
         }
         if(Input.GetKeyDown(KeyCode.LeftArrow)&& !Busy) {
-            rotatingTiles = true;
-            StartCoroutine(RotateTiles(SwipeInfo.SwipeDirection.LEFT));
+            Rotate(SwipeInfo.SwipeDirection.LEFT);
         }
         if(Input.GetKeyDown(KeyCode.RightArrow) && !Busy) {
-            rotatingTiles = true;
-            StartCoroutine(RotateTiles(SwipeInfo.SwipeDirection.RIGHT));
+            Rotate(SwipeInfo.SwipeDirection.RIGHT);
         }
         if(Input.GetKeyDown(KeyCode.S)) {
             TryStep();
+        }
+        if(Input.GetKeyDown(KeyCode.Z)) {
+            UndoLastAction();
         }
     }
 
     private void TryStep(Vector3 tapPosition) {
         // tap position doesn't matter atm
-        TryStep();
+        if(invalidStep) {
+            UndoLastAction();
+        } else {
+            TryStep();
+        }
+    }
+
+    private void UndoLastAction() {
+        if(playerActions.Count > 0) {
+            playerActions.Pop().Undo();
+        }
+        invalidStep = false;
     }
 
     private void TryStep() {
@@ -196,6 +246,9 @@ public class BoardManager : MonoBehaviour
             }
         }
         // handle invalid movement here.
+        SFXManager.Play("InvalidStep", audioSource);
+        invalidStep = true;
+
     }
 
     private Tile RenderTile(int col, int row, float cellSize, bool isStraight, Orientation startingOrientation) {
@@ -261,8 +314,7 @@ public class BoardManager : MonoBehaviour
         }
 
         if(!Busy) {
-            rotatingTiles = true;
-            StartCoroutine(RotateTiles(swipe.Direction));
+            Rotate(swipe.Direction);
         }
     }
 

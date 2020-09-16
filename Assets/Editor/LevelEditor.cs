@@ -22,9 +22,14 @@ public class LevelEditor : Editor
 	public override void OnInspectorGUI()
 	{
 
+		EditorGUILayout.BeginVertical();
+		SerializedProperty startingIndex = serializedObject.FindProperty("startingIndex");
+        SerializedProperty endingIndex = serializedObject.FindProperty("endingIndex");
+		EditorGUILayout.PropertyField(startingIndex);
+        EditorGUILayout.PropertyField(endingIndex);
+		EditorGUILayout.EndVertical();
 
 		EditorGUILayout.BeginHorizontal();
-
 		SerializedProperty numberOfRowsProp = serializedObject.FindProperty("numberOfRows");
         SerializedProperty numberOfColumnsProp = serializedObject.FindProperty("numberOfColumns");
 		EditorGUILayout.PropertyField(numberOfColumnsProp);
