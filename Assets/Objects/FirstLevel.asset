@@ -14,5 +14,209 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingIndex: {x: 0, y: 0}
   endingIndex: {x: 0, y: 0}
-  numberOfColumns: 0
-  numberOfRows: 0
+  numberOfColumns: 12
+  numberOfRows: 8
+  levelMatrix:
+    numberOfColumns: 12
+    numberOfRows: 8
+    rows:
+    - row:
+      - startingOrientation: 2
+        isStraight: 0
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 3
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 1
+        isStraight: 0
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 1
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 1
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 1
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0

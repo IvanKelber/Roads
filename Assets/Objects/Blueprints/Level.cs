@@ -7,14 +7,41 @@ using System;
 public class Level : ScriptableObject
 {
 
-    // public Vector2Int startingIndex;
+    public Vector2Int startingIndex;
 
-    // public Vector2Int endingIndex;
+    public Vector2Int endingIndex;
 
-    // [Range(0,12)]
-    // public int numberOfColumns;
-    // [Range(0,12)]
-    // public int numberOfRows;
-    public TileInfo[] levelMatrix;
+    [Range(0,12)]
+    public int numberOfColumns;
+    [Range(0,12)]
+    public int numberOfRows;
+
+    public TileMatrix levelMatrix;
+
+    [Serializable]
+    public class TileMatrix {
+        public int numberOfColumns;
+        public int numberOfRows;
+
+        public TileRow[] rows;
+
+        public TileMatrix(int numberOfColumns, int numberOfRows) {
+            this.numberOfColumns = numberOfColumns;
+            this.numberOfRows = numberOfRows;
+
+            rows = new TileRow[numberOfRows];
+            for(int i = 0; i < numberOfRows; i++) {
+                rows[i] = new TileRow(numberOfColumns);
+            }
+        }
+    }
+    [Serializable]
+    public class TileRow {
+        public TileInfo[] row;
+
+        public TileRow(int numberOfColumns) {
+            row = new TileInfo[numberOfColumns];
+        }
+    }
 
 }

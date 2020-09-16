@@ -8,6 +8,7 @@ public class LevelEditor : Editor
 {
 
 	Level level;
+	bool showPosition = false;
 
 	public void OnEnable()
 	{
@@ -20,15 +21,63 @@ public class LevelEditor : Editor
 
 	public override void OnInspectorGUI()
 	{
-		DrawDefaultInspector();
 
-		// if(level.numberOfColumns > 0 && level.numberOfRows > 0) {
-		// 	EditorGUI.BeginDisabledGroup(serializedObject.isEditingMultipleObjects);
-		// 	for(int i = 0; i < level.numberOfColumns; i++) {
-		// 		EditorGUI.Toggle(new Rect(0 + i,5, 15+ i, 20),false);
-		// 	}
-		// 	EditorGUI.EndDisabledGroup();
-		// }
+
+		EditorGUILayout.BeginHorizontal();
+
+		SerializedProperty numberOfRowsProp = serializedObject.FindProperty("numberOfRows");
+        SerializedProperty numberOfColumnsProp = serializedObject.FindProperty("numberOfColumns");
+		EditorGUILayout.PropertyField(numberOfColumnsProp);
+        EditorGUILayout.PropertyField(numberOfRowsProp);
+		EditorGUILayout.EndHorizontal();
+		serializedObject.ApplyModifiedProperties();
+
+		EditorGUI.BeginDisabledGroup(level.numberOfColumns == 0 || level.numberOfRows == 0);
+		EditorGUILayout.LabelField("Level Matrix");
+		SerializedProperty levelMatrix = serializedObject.FindProperty("levelMatrix");
+		if(levelMatrix == null
+				|| levelMatrix.FindPropertyRelative("numberOfColumns").intValue != level.numberOfColumns
+				|| levelMatrix.FindPropertyRelative("numberOfRows").intValue != level.numberOfRows) {
+			level.levelMatrix = new Level.TileMatrix(level.numberOfColumns, level.numberOfRows);
+			serializedObject.ApplyModifiedProperties();
+		}
+
+		EditorGUILayout.BeginVertical("box");
+		SerializedProperty rows = levelMatrix.FindPropertyRelative("rows");
+
+		for(int j = 0; j < rows.arraySize; j++) {
+			EditorGUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			EditorGUILayout.EndHorizontal();
+			Rect scale = GUILayoutUtility.GetLastRect();
+
+			EditorGUIUtility.LookLikeInspector();
+			EditorGUIUtility.LookLikeControls(scale.width/2);
+			SerializedProperty row = rows.GetArrayElementAtIndex(j).FindPropertyRelative("row");
+			Rect horizontalRect = EditorGUILayout.BeginHorizontal("box");
+			
+			for(int i = 0; i < row.arraySize; i++) {
+				Rect tileRect = new Rect(horizontalRect.x + 10 * i, horizontalRect.y, 40, horizontalRect.height);
+				EditorGUILayout.PropertyField(row.GetArrayElementAtIndex(i));
+			}
+
+			EditorGUILayout.EndHorizontal();
+		}
+
+		EditorGUILayout.EndVertical();
+
+			// if(levelMatrix != null)
+				// EditorGUI.PropertyField(new Rect(40,40,40,40), levelMatrix.GetArrayElementAtIndex(0).GetArrayElementAtIndex(0), GUIContent.none);
+			// for(int j = 0; j < level.numberOfRows; j++) {
+			// 	EditorGUILayout.BeginHorizontal();
+			// 	for(int i = 0; i < level.numberOfColumns; i++) {
+					
+			// 	}
+			// 	EditorGUILayout.EndHorizontal();
+			// }	
+		
+		EditorGUI.EndDisabledGroup();
+
 		// if (GUILayout.Button("Preview"))
 		// {
 		// 	((AudioEvent) target).Play(_previewer, 1);

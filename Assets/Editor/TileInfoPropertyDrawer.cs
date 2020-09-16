@@ -5,8 +5,6 @@ using TileRotation;
 [CustomPropertyDrawer(typeof(TileInfo))]
 public class TileInfoPropertyDrawer : PropertyDrawer
 {
-    private float rotationAngle = 0;
-
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
         return 40;
     }
@@ -35,7 +33,7 @@ public class TileInfoPropertyDrawer : PropertyDrawer
             SetProperty(property, "startingOrientation", (int) nextOrientation);
         } 
         GUI.DrawTexture(rect, iconTexture);
-        GUI.Label(new Rect(rect.x + 50, rect.y, position.width, 30), "texture: " + iconTexture);
+        // GUI.Label(new Rect(rect.x + 50, rect.y, position.width, 30), "texture: " + iconTexture);
         EditorGUI.EndProperty();
     }
 
