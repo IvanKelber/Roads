@@ -36,7 +36,7 @@ public class BoardManager : MonoBehaviour
     private Tile tilePrefab;
 
     [SerializeField]
-    private Level firstLevel;
+    private LevelManager levelManager;
 
     private Bounds outerBoardBounds;
     private Bounds innerBoardBounds;
@@ -65,7 +65,7 @@ public class BoardManager : MonoBehaviour
         Gestures.OnSwipe += HandleSwipe;
         Gestures.OnTap += TryStep;
         audioSource = GetComponent<AudioSource>();
-        LoadLevel(firstLevel);
+        LoadLevel(levelManager.CurrentLevel);
     }
 
     private void RenderBoard(Level level) {
@@ -203,7 +203,8 @@ public class BoardManager : MonoBehaviour
     }
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Space)) {
-            RenderBoard();
+            levelManager.NextLevel();
+            LoadLevel(levelManager.CurrentLevel);
         }
         if(Input.GetKeyDown(KeyCode.LeftArrow)&& !Busy) {
             Rotate(SwipeInfo.SwipeDirection.LEFT);
@@ -217,6 +218,7 @@ public class BoardManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Z)) {
             UndoLastAction();
         }
+
     }
 
     private void TryStep(Vector3 tapPosition) {
@@ -242,6 +244,11 @@ public class BoardManager : MonoBehaviour
             if(!neighbor.IsLocked) {
                 car.Step(neighbor.Index);
                 neighbor.Lock();
+                if(levelManager.CurrentLevel.endingIndex == neighbor.Index) {
+                    SFXManager.Play("LevelWon", audioSource);
+                    levelManager.NextLevel();
+                    LoadLevel(levelManager.CurrentLevel);
+                }
                 return;
             }
         }
@@ -302,14 +309,12 @@ public class BoardManager : MonoBehaviour
             return;
         }
         if(swipe.Direction == SwipeInfo.SwipeDirection.UP) {
-            numberOfColumns++;
-            numberOfRows++;
-            RenderBoard();
+            levelManager.NextLevel();
+            LoadLevel(levelManager.CurrentLevel);
             return;
         } else if (swipe.Direction == SwipeInfo.SwipeDirection.DOWN) {
-            numberOfColumns--;
-            numberOfRows--;
-            RenderBoard();
+            levelManager.PreviousLevel();
+            LoadLevel(levelManager.CurrentLevel);
             return;
         }
 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level3
   m_EditorClassIdentifier: 
   startingIndex: {x: 0, y: 1}
-  endingIndex: {x: 0, y: 0}
+  endingIndex: {x: 3, y: 0}
   numberOfColumns: 4
   numberOfRows: 2
   levelMatrix:
