@@ -50,7 +50,7 @@ public class LevelEditor : Editor
 		EditorGUILayout.BeginVertical("box");
 		SerializedProperty rows = levelMatrix.FindPropertyRelative("rows");
 
-		for(int j = 0; j < rows.arraySize; j++) {
+		for(int j = rows.arraySize - 1; j >= 0; j--) {
 			EditorGUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
 			EditorGUILayout.EndHorizontal();

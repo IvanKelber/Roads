@@ -23,7 +23,7 @@ public class Car : MonoBehaviour
     }
 
     private void SetScale() {
-        transform.localScale = new Vector3(board.cellWidth/2, board.cellWidth/2, 0);
+        transform.localScale = new Vector3(board.cellWidth, board.cellWidth, 0);
     }
 
     public void Step(Vector2Int newIndex) {

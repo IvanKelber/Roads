@@ -271,11 +271,12 @@ MonoBehaviour:
   marginY: 0
   cellPadding: 0
   cellRotationDuration: 0.3
+  undoRotationDuration: 0.05
   popMagnitude: 50
   cam: {fileID: 519420031}
   cellWidth: 0
   tilePrefab: {fileID: 4264874068421155, guid: f2623afedb24647f49e9fdcd4ef1fa98, type: 3}
-  firstLevel: {fileID: 11400000, guid: b73f3d765435d48a68ace14da5041ea7, type: 2}
+  levelManager: {fileID: 11400000, guid: ef79af6e7fa91465c91d5b7ebd68342e, type: 2}
   SFXManager: {fileID: 11400000, guid: 533bb5265d63d4055a00df365c35d568, type: 2}
   car: {fileID: 1646161998}
 --- !u!4 &92320535
