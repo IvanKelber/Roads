@@ -14,7 +14,7 @@ public class RotateAction : PlayerAction
     }
 
     public override bool Undo() {
-        board.Rotate(-degreesRotated);
+        board.UndoRotation(-degreesRotated);
         return true;
     }
 

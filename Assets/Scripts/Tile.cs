@@ -161,6 +161,10 @@ public class Tile : MonoBehaviour
         isLocked = true;
     }
 
+    public void Unlock() {
+        isLocked = false;
+    }
+
     public HashSet<TileEntry> GetEntries() {
         HashSet<TileEntry> entries = new HashSet<TileEntry>();
         if(isStraight) {

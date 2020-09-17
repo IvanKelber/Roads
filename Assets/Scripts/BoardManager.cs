@@ -22,6 +22,9 @@ public class BoardManager : MonoBehaviour
     [SerializeField, Range(.01f,1)]
     private float cellRotationDuration = .1f;
 
+    [SerializeField, Range(.01f,1)]
+    private float undoRotationDuration = .05f;
+
     [SerializeField, Range(0, 50)]
     private int popMagnitude = 1;
 
@@ -173,34 +176,44 @@ public class BoardManager : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator RotateTiles(float degrees, bool undo) {
+    private IEnumerator RotateTiles(float degrees) {
+        yield return StartCoroutine(DoRotate(degrees, cellRotationDuration));
+        CompositePlayerAction composite = new CompositePlayerAction();
+        composite.AddAction(new RotateAction(this, degrees));
+        TryStep(composite);
+        playerActions.Push(composite);
+    }
+
+    public void UndoRotation(float degrees) {
+        StartCoroutine(DoRotate(degrees, undoRotationDuration));
+    }
+
+    public bool UndoStep(Vector2Int index) {
+        grid[car.Index.x, car.Index.y].Unlock();
+        car.Step(index);
+        return true;
+    }
+
+    private IEnumerator DoRotate(float degrees, float duration) {
         rotatingTiles = true;
         for(int i = 0; i < numberOfColumns; i++) {
             for(int j = 0; j < numberOfRows; j++) {
                 if(!grid[i,j].IsLocked) {
-                    Coroutine rotation = StartCoroutine(RotateTile(grid[i,j], degrees, cellRotationDuration));
+                    Coroutine rotation = StartCoroutine(RotateTile(grid[i,j], degrees, duration));
                     if(i == numberOfColumns - 1 && j == numberOfRows -1) {
                         yield return rotation;
                     }
                 }
             }
         }
-        if(!undo) {
-            TryStep();
-        }
         rotatingTiles = false;
-
     }
 
     private void Rotate(SwipeInfo.SwipeDirection direction) {
         float degrees = direction == SwipeInfo.SwipeDirection.LEFT ? -90 : 90;
-        StartCoroutine(RotateTiles(degrees, false));
-        playerActions.Push(new RotateAction(this, degrees));
+        StartCoroutine(RotateTiles(degrees));
     }
 
-    public void Rotate(float degrees) {
-        StartCoroutine(RotateTiles(degrees, true));
-    }
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Space)) {
             levelManager.NextLevel();
@@ -213,7 +226,11 @@ public class BoardManager : MonoBehaviour
             Rotate(SwipeInfo.SwipeDirection.RIGHT);
         }
         if(Input.GetKeyDown(KeyCode.S)) {
-            TryStep();
+            CompositePlayerAction composite = new CompositePlayerAction();
+            TryStep(composite);
+            // if(!composite.Empty) {
+                playerActions.Push(composite);
+            // }
         }
         if(Input.GetKeyDown(KeyCode.Z)) {
             UndoLastAction();
@@ -223,31 +240,36 @@ public class BoardManager : MonoBehaviour
 
     private void TryStep(Vector3 tapPosition) {
         // tap position doesn't matter atm
-        if(invalidStep) {
-            UndoLastAction();
-        } else {
-            TryStep();
-        }
+        CompositePlayerAction composite = new CompositePlayerAction();
+        TryStep(composite);
+        // if(!composite.Empty) {
+        playerActions.Push(composite);
+        // }
     }
 
     private void UndoLastAction() {
         if(playerActions.Count > 0) {
+            Debug.Log("Undoing");
             playerActions.Pop().Undo();
         }
         invalidStep = false;
     }
 
-    private void TryStep() {
+    private void TryStep(CompositePlayerAction composite) {
         Tile carCurrentTile = grid[car.Index.x, car.Index.y];
 
         foreach(Tile neighbor in GetConnectedNeighbors(carCurrentTile)) {
             if(!neighbor.IsLocked) {
+                StepAction stepAction = new StepAction(this, car.Index);
                 car.Step(neighbor.Index);
                 neighbor.Lock();
                 if(levelManager.CurrentLevel.endingIndex == neighbor.Index) {
                     SFXManager.Play("LevelWon", audioSource);
+                    playerActions.Clear();
                     levelManager.NextLevel();
                     LoadLevel(levelManager.CurrentLevel);
+                } else {
+                    composite.AddAction(stepAction);
                 }
                 return;
             }
@@ -255,7 +277,6 @@ public class BoardManager : MonoBehaviour
         // handle invalid movement here.
         SFXManager.Play("InvalidStep", audioSource);
         invalidStep = true;
-
     }
 
     private Tile RenderTile(int col, int row, float cellSize, bool isStraight, Orientation startingOrientation) {
@@ -357,25 +378,6 @@ public class BoardManager : MonoBehaviour
     }
     
     private void OnDrawGizmos() {
-        // if(grid != null) {
-        //     Gizmos.color = new Color(.8f, 0, 0, .5f);
-        //     for(int col = 0; col < numberOfColumns; col++) {
-        //         for(int row = 0; row < numberOfRows; row++) {
-        //             if(grid[col,row] == null) {
-        //                 Gizmos.DrawCube(CalculateGamePosition(col, row, innerBoardBounds), new Vector3(cellWidth, cellHeight, 1));
-        //             }
-        //         }
-        //     }
-        // }
-        // if(outerBoardBounds != null) {
-        //     Gizmos.color = new Color(.7f, 0f, .7f, .3f);
-
-        //     Gizmos.DrawCube(outerBoardBounds.center, new Vector3(outerBoardBounds.max.x - outerBoardBounds.min.x, outerBoardBounds.max.y - outerBoardBounds.min.y, 1));
-
-        //     Gizmos.color = new Color(0f, .7f, .7f, .3f);
-
-        //     Gizmos.DrawCube(innerBoardBounds.center, new Vector3(innerBoardBounds.max.x - innerBoardBounds.min.x, innerBoardBounds.max.y - innerBoardBounds.min.y, 1));
-        // }
 
         if(grid == null) {
             return;
