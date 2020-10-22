@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GrassMaterial
+  m_Shader: {fileID: 4800000, guid: 9a77e9759e49d472584dbdd68a25f36a, type: 3}
+  m_ShaderKeywords: _ALPHA_CLIP_DISABLED _COLOR_TINT _DEBUG_NONE _EMISSION _EMISSIVE_COLOR_MAP
+    _SURFACE_MAP_METALLIC_GLOSS _WIND_CONTROL_VERTEX
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Albedo:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 2800000, guid: 081af5c0e04008140b98f70f21251b8d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: dea9e44d660fe4e988cbff4ca9bd5397, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ThicknessMap:
+        m_Texture: {fileID: 2800000, guid: db2d944624423944dacdad91bf6470d7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BumpScale: 1
+    - _ColorVariationSpread: 0.2
+    - _Cull: 0
+    - _Cutoff: 0.5
+    - _DEBUG: 3
+    - _Glossiness: 0.5
+    - _InteractionDuration: 1
+    - _InteractionPushDown: 1
+    - _InteractionStrength: 1
+    - _Metallic: 0
+    - _NatureRendererDistanceControl: 1
+    - _ObjectHeight: 0.5
+    - _ObjectRadius: 0.5
+    - _Translucency: 1
+    - _TranslucencyDistortion: 0.5
+    - _TranslucencyScattering: 2
+    - _TurbulenceStrength: 1
+    - _VertexNormalStrength: 1
+    - _WIND_CONTROL: 2
+    - _WindStrength: 1
+    - _WindVariation: 0.3
+    m_Colors:
+    - _EmissionColor: {r: 0.11764706, g: 1.2862746, b: 0.38431373, a: 1}
+    - _GlossRemap: {r: 0, g: 1, b: 0, a: 0}
+    - _HSL: {r: 0.02, g: 0.05, b: 0.1, a: 0}
+    - _HSLVariation: {r: -0.02, g: -0.05, b: -0.1, a: 0}
+    - _OcclusionRemap: {r: 1, g: 1, b: 0, a: 0}
+    - _ScaleFade: {r: 50, g: 20, b: 0, a: 0}
+    - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
+    - _Tint: {r: 0.08223568, g: 0.5283019, b: 0.12225834, a: 1}
+    - _TintVariation: {r: 0.030838378, g: 0.31132078, b: 0.046147503, a: 1}
+    - _TranslucencyColor: {r: 0.15739588, g: 0.254717, b: 0.24869728, a: 1}
+    - _WindFade: {r: 50, g: 20, b: 0, a: 0}
+  m_BuildTextureStacks: []

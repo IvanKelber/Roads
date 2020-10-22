@@ -3,7 +3,13 @@ guid: 2fe1469580e654a489adda99316413fd
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - cam: {instanceID: 0}
+  - tilePrefab: {instanceID: 0}
+  - levelManager: {fileID: 11400000, guid: ef79af6e7fa91465c91d5b7ebd68342e, type: 2}
+  - SFXManager: {instanceID: 0}
+  - car: {instanceID: 0}
+  - grassMaterial: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

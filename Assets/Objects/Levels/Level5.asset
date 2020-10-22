@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ec75be7dbffd4ea692fa36ab571cb63, type: 3}
+  m_Name: Level5
+  m_EditorClassIdentifier: 
+  startingIndex: {x: 0, y: 2}
+  endingIndex: {x: 4, y: 1}
+  numberOfColumns: 5
+  numberOfRows: 3
+  levelMatrix:
+    numberOfColumns: 5
+    numberOfRows: 3
+    rows:
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 1
+        isStraight: 0
+      - startingOrientation: 3
+        isStraight: 0
+    - row:
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 1
+        isStraight: 1
+      - startingOrientation: 1
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 1
+      - startingOrientation: 0
+        isStraight: 0
+    - row:
+      - startingOrientation: 1
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0
+      - startingOrientation: 0
+        isStraight: 0

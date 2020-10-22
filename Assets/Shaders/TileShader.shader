@@ -2,9 +2,10 @@
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
-        _OutlineTex ("Texture", 2D) = "white" {}
-        _MainColor ("Color", Color) = (0,0,0,0)
+        _MainTex ("MainTexture", 2D) = "white" {}
+        _OutlineTexture ("Outline Texture", 2D) = "white" {}
+        _OutlineColor ("Outline Color", Color) = (0,0,0,0)
+        _RenderOutline ("Render Outline", Int) = 0
     }
     SubShader
     {
@@ -39,8 +40,8 @@
             };
 
             sampler2D _MainTex;
-            sampler2D _OutlineTex;
-            float4 _MainColor;
+            sampler2D _BackgroundTex;
+            int _RenderBackground;
             float4 _MainTex_ST;
 
             v2f vert (appdata v)
@@ -54,9 +55,18 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
+
+                fixed4 background = tex2D(_BackgroundTex, i.uv);
+                fixed4 col = background;
+
                 fixed4 main = tex2D(_MainTex, i.uv);
-                fixed4 outline = tex2D(_OutlineTex, i.uv);
-                return main;
+                if(_RenderBackground > 0) {
+                    col = lerp(col, main, main.a);
+                } else {
+                    col = main;
+                }        
+                
+                return col;
             }
             ENDCG
         }

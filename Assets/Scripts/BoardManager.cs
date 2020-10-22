@@ -18,7 +18,6 @@ public class BoardManager : MonoBehaviour
     [Range(0,100)]
     public float cellPadding;
 
-
     [SerializeField, Range(.01f,1)]
     private float cellRotationDuration = .1f;
 
@@ -47,6 +46,8 @@ public class BoardManager : MonoBehaviour
     private bool rotatingTiles = false;
     private bool invalidStep = false;
 
+    private bool undoingAction = false;
+
 
     [SerializeField]
     private AudioManager SFXManager;
@@ -55,7 +56,7 @@ public class BoardManager : MonoBehaviour
 
     private bool Busy {
         get {
-            return rotatingTiles || invalidStep;
+            return rotatingTiles || invalidStep || undoingAction;
         }
     }
 
@@ -63,11 +64,19 @@ public class BoardManager : MonoBehaviour
 
     private Stack<PlayerAction> playerActions = new Stack<PlayerAction>();
 
+    private MeshRenderer grassRenderer;
+    private MeshFilter grassFilter;
+
+    [SerializeField]
+    private Material grassMaterial;
+
     private void Awake()
     {
-        Gestures.OnSwipe += HandleSwipe;
-        Gestures.OnTap += TryStep;
+        // Gestures.OnSwipe += HandleSwipe;
+        // Gestures.OnTap += TryStep;
         audioSource = GetComponent<AudioSource>();
+        grassRenderer = gameObject.AddComponent<MeshRenderer>();
+        grassFilter = gameObject.AddComponent<MeshFilter>();
         LoadLevel(levelManager.CurrentLevel);
     }
 
@@ -105,6 +114,7 @@ public class BoardManager : MonoBehaviour
         innerBoardBounds = new Bounds(outerBoardBounds.center, new Vector3((cellWidth + cellPadding) * numberOfColumns, (cellHeight + cellPadding) * numberOfRows, 0));
         transform.position = outerBoardBounds.center;
         grid = InitializeGrid(level);
+        RenderGrass();
     }
 
     private void RenderBoard() {
@@ -178,6 +188,7 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator RotateTiles(float degrees) {
         yield return StartCoroutine(DoRotate(degrees, cellRotationDuration));
+        Debug.Log("Tiles rotated... trying to step");
         CompositePlayerAction composite = new CompositePlayerAction();
         composite.AddAction(new RotateAction(this, degrees));
         TryStep(composite);
@@ -215,6 +226,8 @@ public class BoardManager : MonoBehaviour
     }
 
     private void Update() {
+        // Debug.Log(grid[levelManager.CurrentLevel.startingIndex.x, levelManager.CurrentLevel.startingIndex.y].IsLocked);
+        // grid[levelManager.CurrentLevel.startingIndex.x, levelManager.CurrentLevel.startingIndex.y].Lock();
         if(Input.GetKeyDown(KeyCode.Space)) {
             levelManager.NextLevel();
             LoadLevel(levelManager.CurrentLevel);
@@ -248,8 +261,7 @@ public class BoardManager : MonoBehaviour
     }
 
     private void UndoLastAction() {
-        if(playerActions.Count > 0) {
-            Debug.Log("Undoing");
+        if(playerActions.Count > 0 && !undoingAction) {
             playerActions.Pop().Undo();
         }
         invalidStep = false;
@@ -258,12 +270,14 @@ public class BoardManager : MonoBehaviour
     private void TryStep(CompositePlayerAction composite) {
         Tile carCurrentTile = grid[car.Index.x, car.Index.y];
 
+        Debug.Log("Trying step from index: " + carCurrentTile.Index);
         foreach(Tile neighbor in GetConnectedNeighbors(carCurrentTile)) {
-            if(!neighbor.IsLocked) {
+            Debug.Log("To index: " + neighbor.Index);
+            if(!neighbor.IsLocked || neighbor.Index == levelManager.CurrentLevel.endingIndex) {
                 StepAction stepAction = new StepAction(this, car.Index);
                 car.Step(neighbor.Index);
                 neighbor.Lock();
-                if(levelManager.CurrentLevel.endingIndex == neighbor.Index) {
+                if(levelManager.CurrentLevel.endingIndex == neighbor.Index && neighbor.GetEntries().Contains(Tile.TileEntry.Right)) {
                     SFXManager.Play("LevelWon", audioSource);
                     playerActions.Clear();
                     levelManager.NextLevel();
@@ -278,12 +292,65 @@ public class BoardManager : MonoBehaviour
         SFXManager.Play("InvalidStep", audioSource);
         invalidStep = true;
     }
+    
+    private void RenderGrass() {
+    
+        grassRenderer.sharedMaterial = grassMaterial;
+        grassFilter.mesh = new Mesh();
+
+        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        mesh.Clear();
+
+        float z = outerBoardBounds.center.z + .01f;
+        mesh.vertices = new Vector3[4] {
+            transform.InverseTransformPoint(new Vector3(innerBoardBounds.min.x, innerBoardBounds.min.y, z)),
+            transform.InverseTransformPoint(new Vector3(innerBoardBounds.max.x, innerBoardBounds.min.y, z)),
+            transform.InverseTransformPoint(new Vector3(innerBoardBounds.min.x, innerBoardBounds.max.y, z)),
+            transform.InverseTransformPoint(new Vector3(innerBoardBounds.max.x, innerBoardBounds.max.y, z))
+        };
+        mesh.triangles = GetTriangles();
+        Vector3[] normals = new Vector3[4]
+        {
+                -Vector3.forward,
+                -Vector3.forward,
+                -Vector3.forward,
+                -Vector3.forward
+        };
+        mesh.normals = normals;
+
+        Vector2[] uv = new Vector2[4]
+        {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2(1, 1)
+        };
+        mesh.uv = uv;
+
+    }
+
+    private int[] GetTriangles()
+    {
+        int[] tris = new int[6]
+        {
+            // lower left triangle
+            0, 2, 1,
+            // upper right triangle
+            2, 3, 1
+        };
+        return tris;
+    }
 
     private Tile RenderTile(int col, int row, float cellSize, bool isStraight, Orientation startingOrientation) {
         Vector3 center = CalculateGamePosition(col, row, innerBoardBounds);
         Tile tile = (Instantiate(tilePrefab, center, Quaternion.identity) as Tile);
-        tile.Initialize(cellSize, isStraight, new Vector2Int(col, row), outerBoardBounds.center.z, startingOrientation);
+        Vector2Int index = new Vector2Int(col, row);
+        bool shouldLock = (index == levelManager.CurrentLevel.startingIndex);// || (index == levelManager.CurrentLevel.endingIndex);
+        tile.Initialize(cellSize, isStraight, new Vector2Int(col, row), outerBoardBounds.center.z, startingOrientation, shouldLock);
         tile.transform.parent = transform;
+        if(index == levelManager.CurrentLevel.endingIndex) {
+            tile.AddParticlesAsChild();
+        }
         return tile;
     }
 
@@ -343,10 +410,6 @@ public class BoardManager : MonoBehaviour
             Rotate(swipe.Direction);
         }
     }
-
-    // public void LockTile(Vector2 index) {
-    //     grid[(int)index.x, (int)index.y].Lock();
-    // }
 
     public Vector3 GetPosition(int column, int row) {
         return grid[column,row].Position;

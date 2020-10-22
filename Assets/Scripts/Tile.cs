@@ -16,8 +16,11 @@ public class Tile : MonoBehaviour
     private float cellWidth = 1;
     private float cellHeight = 1;
     private float z = 1;
+    private bool shouldLock = false;
 
-    private BoxCollider collider;
+    [SerializeField]
+    private Color unlockedTint;
+
 
     [SerializeField]
     private Vector2GameEvent onTapped;
@@ -64,32 +67,39 @@ public class Tile : MonoBehaviour
     [HideInInspector]
     public AudioSource audioSource;
 
+    private GameObject particles;
+
+    [SerializeField]
+    private GameObject particlesPrefab;
+
     private void Awake()
     {
-        meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshFilter = gameObject.AddComponent<MeshFilter>();
-        collider = gameObject.AddComponent<BoxCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        meshFilter = GetComponent<MeshFilter>();
         audioSource = GetComponent<AudioSource>();
         if(audioSource == null) {
             Debug.LogWarning("Audio source is not attached to tile prefab");
         }
     }
 
-    public void Initialize(float cellSize, bool isStraight, Vector2Int index, float z, Orientation startingOrientation) {
+    public void Initialize(float cellSize, bool isStraight, Vector2Int index, float z, Orientation startingOrientation, bool shouldLock) {
         this.cellWidth = cellSize;
         this.cellHeight = cellSize;
         this.isStraight = isStraight;
         this.z = z;
         this.currentOrienation = startingOrientation;
+        this.shouldLock = shouldLock;
         Index = index;
     }
 
     private void Start() {
         Render(transform.position);
-        collider.size = new Vector3(cellWidth, cellHeight, 1);
     }
 
     public void Destroy() {
+        if(particles != null) {
+            Destroy(this.particles);
+        }
         Destroy(this.gameObject);
     }
 
@@ -122,6 +132,22 @@ public class Tile : MonoBehaviour
         };
         mesh.uv = uv;
         ReOrient();
+        if(shouldLock) {
+            Lock();
+        } else {
+            Unlock();
+        }
+    }
+
+    public void AddParticlesAsChild() {
+        particles = Instantiate(particlesPrefab, transform.position, Quaternion.identity);
+        particles.transform.parent = this.transform;
+        ParticleSystem particleSys = particles.GetComponent<ParticleSystem>();
+        if(particleSys == null) {
+            Debug.LogError("Particle system can not be found.  Check prefab");
+            return;
+        }
+        particles.transform.localScale *= cellWidth;
     }
 
     private void ReOrient() {
@@ -152,17 +178,17 @@ public class Tile : MonoBehaviour
         return tris;
     }
 
-    private void OnMouseDown() {
-        // onTapped.Raise(new Vector2(Index.x, Index.y));
-        Lock();
-    }
-
     public void Lock() {
         isLocked = true;
+        this.meshRenderer.material.SetInt("_RenderOutline", 0);
+        this.meshRenderer.material.SetColor("_Color", Color.white);
     }
 
     public void Unlock() {
         isLocked = false;
+        // Debug.Log("Unlocking tile: " + Index);
+        this.meshRenderer.material.SetInt("_RenderOutline", 1);
+        this.meshRenderer.material.SetColor("_Color", unlockedTint);
     }
 
     public HashSet<TileEntry> GetEntries() {
@@ -204,4 +230,5 @@ public class Tile : MonoBehaviour
         Top,
         Bottom
     }
+
 }

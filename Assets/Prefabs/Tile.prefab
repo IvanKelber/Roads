@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2092455453522645195}
   - component: {fileID: 4264874068421155}
+  - component: {fileID: 5226540587775066344}
+  - component: {fileID: -6658682121691404040}
   m_Layer: 0
   m_Name: Tile
   m_TagString: Untagged
@@ -44,8 +46,59 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textures:
-  - {fileID: 2800000, guid: 075f1b0c414484185b999ea8b06ab2f0, type: 3}
-  - {fileID: 2800000, guid: b5e7ffe419fc2434984fa4952770fec8, type: 3}
+  - {fileID: 2800000, guid: f98ec3ca074e74c648bfa5aa98afaf9e, type: 3}
+  - {fileID: 2800000, guid: e0c248e5205114c119a40715e15c4698, type: 3}
+  unlockedTint: {r: 0.6415094, g: 0.35404056, b: 0.35404056, a: 0.8352941}
   onTapped: {fileID: 11400000, guid: 63e9d85995599490cadaf65069a5cc1c, type: 2}
-  material: {fileID: 2100000, guid: cb6dfc73631254086a507124fab7921f, type: 2}
+  material: {fileID: 2100000, guid: bcb10ce6223d1405ab7f790170b59b0c, type: 2}
   audioSource: {fileID: 0}
+  particlesPrefab: {fileID: 6252335686399517942, guid: ec4afa8060a944e2fac5910e02bfec9d, type: 3}
+--- !u!23 &5226540587775066344
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9056251385465444419}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: cb6dfc73631254086a507124fab7921f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &-6658682121691404040
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9056251385465444419}
+  m_Mesh: {fileID: 0}

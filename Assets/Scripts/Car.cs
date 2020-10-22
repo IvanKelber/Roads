@@ -11,15 +11,16 @@ public class Car : MonoBehaviour
     }
 
     public void Initialize(Vector2Int startingIndex) {
-        Debug.Log("initializing car at " + startingIndex);
         Index = startingIndex;
-        board.grid[startingIndex.x, startingIndex.y].Lock();
         SetPosition();
+        SetScale();
     }
+
 
     private void SetPosition() {
         Vector3 indexLocation = board.GetPosition(Index);
         transform.position = new Vector3(indexLocation.x, indexLocation.y, indexLocation.z - 1);
+
     }
 
     private void SetScale() {

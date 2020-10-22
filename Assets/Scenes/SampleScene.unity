@@ -156,6 +156,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectBeforeRelase: 0
   tapThreshold: 10
+  fingerUpPosition: {x: 0, y: 0, z: 0}
+  fingerDownPosition: {x: 0, y: 0, z: 0}
   camera: {fileID: 519420031}
 --- !u!82 &92320533
 AudioSource:
@@ -279,6 +281,7 @@ MonoBehaviour:
   levelManager: {fileID: 11400000, guid: ef79af6e7fa91465c91d5b7ebd68342e, type: 2}
   SFXManager: {fileID: 11400000, guid: 533bb5265d63d4055a00df365c35d568, type: 2}
   car: {fileID: 1646161998}
+  grassMaterial: {fileID: 2100000, guid: a67e66642d1854e06971dfac87f45c5a, type: 2}
 --- !u!4 &92320535
 Transform:
   m_ObjectHideFlags: 0
@@ -443,7 +446,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 88d00bdb0c72a4ffdae73695ac2b907e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -472,7 +475,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1646161997}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &1646162002
 Transform:
   m_ObjectHideFlags: 0
